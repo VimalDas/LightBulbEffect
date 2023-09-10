@@ -38,10 +38,9 @@ class ViewController: UIViewController {
     private var initialHeight: CGFloat = 200
     private var isOn = false {
         didSet {
-            toggleFlashlight()
             overlayTextView.textColor = isOn ? .white : .darkGray
-            
             bulb.tintColor = isOn ? .white : .gray
+            toggleFlashlight()
         }
     }
     
@@ -154,11 +153,10 @@ class ViewController: UIViewController {
                            options: [],
                            animations: {
                             self.wireView.frame.size.height = self.initialHeight
+                            self.resetFlashlight()
                             
                             self.view.layoutSubviews()
-                           }) { (true) in
-                self.updateFlashlight()
-            }
+                           })
         }
     }
     
@@ -170,9 +168,19 @@ class ViewController: UIViewController {
         overlayTextView.layer.mask = maskLayer
     }
     
+    private func resetFlashlight() {
+        let maskLayer = CAShapeLayer()
+        maskLayer.frame = overlayTextView.bounds
+        let flashlightPath = UIBezierPath(ovalIn: CGRect(x: 207.5, y: 30, width: 400, height: 400))
+        maskLayer.path = flashlightPath.cgPath
+        overlayTextView.layer.mask = maskLayer
+    }
+    
     private func toggleFlashlight() {
         if overlayTextView.layer.mask == nil {
-            updateFlashlight()
+            UIView.animate(withDuration: 0, delay: 0.5) {
+                self.updateFlashlight()
+            }
         } else {
             overlayTextView.layer.mask = nil
         }
